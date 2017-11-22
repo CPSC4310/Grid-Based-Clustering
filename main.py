@@ -3,6 +3,14 @@ attributes = []
 
 file = './data/Iris_Data.csv'
 
+########################
+# FUNCTION DEFINITIONS #
+########################
+
+def partitionAttributes(values, partitionSize = 5):
+    """Divide values equally according to the specified partition size."""
+
+
 ## Parse incoming data set into an array of dictionaries
 f = open(file, 'r')
 lines = f.read().split('\n')
