@@ -3,7 +3,7 @@ from parseCSV import csvToDictArray
 
 file = './data/Iris_Data.csv'
 
-# Parse CSV file 
+# Parse CSV file
 parsedData = csvToDictArray(file)
 data_set = parsedData[0]
 attributes = parsedData[1]
@@ -30,3 +30,4 @@ grid = Grid(gridSize, xAxisRange, yAxisRange)
 grid.buildGrid(min_den)
 grid.addPoints(data_set, "petal_length", "petal_width")
 grid.getDenseCells()
+grid.sortDenseCells()

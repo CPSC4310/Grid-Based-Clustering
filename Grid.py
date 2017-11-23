@@ -1,3 +1,4 @@
+import operator
 from GridCell import *
 
 class Grid:
@@ -7,11 +8,12 @@ class Grid:
         """Constructor for Grid class."""
 
         # Instance Variables
-        self.size = size        # The size of the grid. Eg, size=5 will build a 5x5 grid.
-        self.xAxis = xAxis      # Array containing range of values for X-Axis of grid.
-        self.yAxis = yAxis      # Array containing range of values for Y-Axis of grid.
-        self.cells = []         # Contains the arrangement of grid cells.
-        self.dense_cells = []   # An array of all dense cells contained in grid.
+        self.size = size            # The size of the grid. Eg, size=5 will build a 5x5 grid.
+        self.xAxis = xAxis          # Array containing range of values for X-Axis of grid.
+        self.yAxis = yAxis          # Array containing range of values for Y-Axis of grid.
+        self.cells = []             # Contains the arrangement of grid cells.
+        self.dense_cells = []       # An array of all dense grid cells that meet the min_den threshold.
+        self.uncertain_cells = []   # An array containing all dense grid cells that do not meet min_den threshold.
 
     def buildGrid(self, min_den):
         """Composes a 2-dimensional grid structure."""
@@ -41,15 +43,19 @@ class Grid:
                         cell.addItem(point)
 
     def getDenseCells(self):
-        """Retrieves all cells that are equal or greater than the density threshold."""
+        """Retrieves all cells with a density."""
         for row in self.cells:
             for cell in row:
                 if cell.isDense():
+                    # Append cells with densities greater or equal to min_den to dense_cells.
                     self.dense_cells.append(cell)
+                elif cell.getDensityCount():
+                    # If min_den is not met, append cell to uncertain_cells.
+                    self.uncertain_cells.append(cell)
 
-    def sortCells(self):
-        """Sorts cell list in descending order."""
-        return []
+    def sortDenseCells(self):
+        """Sorts dense cell list in descending order."""
+        self.dense_cells = sorted(self.dense_cells, key=operator.methodcaller("getDensityCount"), reverse=True)
 
 
 

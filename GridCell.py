@@ -35,6 +35,10 @@ class GridCell:
         """Adds item to cell."""
         self.items.append(item)
 
+    def getDensityCount(self):
+        """Returns a count of the cell's density."""
+        return len(self.items)
+
     def isDense(self):
         """Returns whether or not grid cell is dense."""
         return len(self.items) >= self.min_den
