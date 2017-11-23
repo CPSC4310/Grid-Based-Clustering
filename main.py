@@ -21,7 +21,7 @@ def partitionAttributes(values, partitionSize = 5):
 
 def parseValue(value):
     """Parses string values into floats, otherwise return origin string."""
-    
+
     try:
         float(value)
         return float(value)
@@ -54,7 +54,9 @@ for idx, line in enumerate(lines):
 gridSize = len(attributes)
 xAxisRange = partitionAttributes(valuesPerAttr["petal_length"])
 yAxisRange = partitionAttributes(valuesPerAttr["petal_width"])
-min_den = 5
+min_den = 10
 
-grid = Grid(valuesPerAttr, gridSize, [ "petal_length", xAxisRange ], [ "petal_width", yAxisRange ], min_den)
-grid.buildGrid()
+grid = Grid(gridSize, xAxisRange, yAxisRange)
+grid.buildGrid(min_den)
+grid.addPoints(data_set, "petal_length", "petal_width")
+grid.getDenseCells()
