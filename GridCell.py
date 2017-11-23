@@ -18,18 +18,8 @@ class GridCell:
         self.xPos = xPos        # X-Position of the cell.
         self.yPos = yPos        # Y-Position of the cell.
 
-    def printXVals(self):
-        print(self.xVals)
-
-    def printYVals(self):
-        print(self.yVals)
-
-    def printDensity(self):
-        print(self.xPos, ",", self.yPos, ": ", len(self.items))
-
     def isWithinValueRange(self, data):
         """Checks if an attribute value falls within the min and max value range of cell."""
-
         withinXRange = False
         withinYRange = False
 
@@ -43,10 +33,8 @@ class GridCell:
 
     def addItem(self, item):
         """Adds item to cell."""
-
         self.items.append(item)
 
     def isDense(self):
         """Returns whether or not grid cell is dense."""
-
         return len(self.items) >= self.min_den

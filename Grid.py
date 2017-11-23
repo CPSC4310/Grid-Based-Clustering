@@ -15,7 +15,6 @@ class Grid:
 
     def buildGrid(self, min_den):
         """Composes a 2-dimensional grid structure."""
-
         for y in range(self.size):
             row = []
 
@@ -33,7 +32,6 @@ class Grid:
 
     def addPoints(self, data, xAttr, yAttr):
         """Add data points to grid."""
-
         for point in data:
             for row in self.cells:
                 for cell in row:
@@ -44,8 +42,6 @@ class Grid:
 
     def getDenseCells(self):
         """Retrieves all cells that are equal or greater than the density threshold."""
-        self.dense_cells = []
-
         for row in self.cells:
             for cell in row:
                 if cell.isDense():
