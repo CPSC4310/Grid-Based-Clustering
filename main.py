@@ -1,3 +1,5 @@
+from Grid import *
+
 data_set = []
 attributes = []
 
@@ -12,7 +14,10 @@ def partitionAttributes(values, partitionSize = 5):
 
     rangeDistance = (max(values) - min(values)) / partitionSize
 
-    return [(min(values) + ( x * rangeDistance)) for x in range(partitionSize)].append(max(values))
+    ranges = [round(min(values) + ( x * rangeDistance), 2) for x in range(partitionSize)]
+    ranges.append(max(values))
+
+    return ranges
 
 def parseValue(value):
     """Parses string values into floats, otherwise return origin string."""
@@ -45,3 +50,11 @@ for idx, line in enumerate(lines):
         # Only add items with data in it.
         if bool(item):
             data_set.append(item)
+
+gridSize = len(attributes)
+xAxisRange = partitionAttributes(valuesPerAttr["petal_length"])
+yAxisRange = partitionAttributes(valuesPerAttr["petal_width"])
+min_den = 5
+
+grid = Grid(valuesPerAttr, gridSize, [ "petal_length", xAxisRange ], [ "petal_width", yAxisRange ], min_den)
+grid.buildGrid()

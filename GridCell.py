@@ -6,20 +6,42 @@ class GridCell:
     # the Grid Cell class.
     min_den = 1
 
-    def __init__(self, items, min_den):
-        """Constructor for Grid class."""
+    def __init__(self, min_den, xVals, yVals):
+        """Constructor for Grid cell class."""
 
         # Instance Variables
         self.cluster = -1       # Cluster cell belongs to.
-        self.items = items      # Array of objects contained in cell.
+        self.items = []         # Array of objects contained in cell.
         self.min_den = min_den  # Minimum density of cell.
+        self.xVals = xVals      # Tuple containing the minimum and maximum x-values for cell.
+        self.yVals = yVals      # Tuple containing the minimum and maximum y-values for cell.
+
+    def printXVals(self):
+        print(self.xVals)
+
+    def printYVals(self):
+        print(self.yVals)
+
+    def isWithinValueRange(self, data):
+        """Checks if an attribute value falls within the min and max value range of cell."""
+
+        withinXRange = False
+        withinYRange = False
+
+        if data['x'] >= self.xVals[0] and data['x'] <= self.xVals[1]:
+            withinXRange = True
+
+        if data['y'] >= self.yVals[0] and data['y'] <= self.yVals[1]:
+            withinYRange = True
+
+        return withinXRange and withinYRange
 
     def addItem(self, item):
         """Adds item to cell."""
 
         self.items.append(item)
 
-    def getDensity(self):
+    def isDense(self):
         """Returns whether or not grid cell is dense."""
 
         return len(self.items) >= self.min_den
