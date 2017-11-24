@@ -14,6 +14,7 @@ class Grid:
         self.cells = []             # Contains the arrangement of grid cells.
         self.dense_cells = []       # An array of all dense grid cells that meet the min_den threshold.
         self.uncertain_cells = []   # An array containing all dense grid cells that do not meet min_den threshold.
+        self.clusters = {}          # Dictionary containing clusters and their cell items.
 
     def buildGrid(self, min_den):
         """Composes a 2-dimensional grid structure."""
@@ -56,6 +57,35 @@ class Grid:
     def sortDenseCells(self):
         """Sorts dense cell list in descending order."""
         self.dense_cells = sorted(self.dense_cells, key=operator.methodcaller("getDensityCount"), reverse=True)
+
+    def mergeCells(self):
+        """Iterates through list of sorted dense cells and merges direct-density-reachable cells."""
+        clusterCount = 1
+        cells = self.dense_cells
+        for cell in cells:
+            cell.assignToCluster(clusterCount)
+
+            self.clusters[clusterCount] = []
+            self.clusters[clusterCount].append(cell)
+
+            for _, _cell in enumerate(self.dense_cells[clusterCount:len(self.dense_cells)]):
+                if cell.isAdjacentCell(_cell) and not _cell.isAssignedToCluser():
+                    _cell.assignToCluster(clusterCount)
+                    self.clusters[clusterCount].append(_cell)
+                    self.dense_cells.remove(_cell)
+                    
+            clusterCount += 1
+
+        return self.clusters
+
+
+
+
+
+
+
+
+
 
 
 

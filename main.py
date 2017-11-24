@@ -23,11 +23,13 @@ min_den = 10
 gridSize = len(attributes)
 
 # Build a grid for clustering against "petal_length" vs. "petal_width"
-xAxisRange = partitionAttributes(valuesPerAttr["petal_length"])
-yAxisRange = partitionAttributes(valuesPerAttr["petal_width"])
+xAxisRange = partitionAttributes(valuesPerAttr["sepal_length"])
+yAxisRange = partitionAttributes(valuesPerAttr["sepal_width"])
 
 grid = Grid(gridSize, xAxisRange, yAxisRange)
 grid.buildGrid(min_den)
-grid.addPoints(data_set, "petal_length", "petal_width")
+grid.addPoints(data_set, "sepal_length", "sepal_width")
 grid.getDenseCells()
 grid.sortDenseCells()
+clusters = grid.mergeCells()
+

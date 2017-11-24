@@ -35,10 +35,51 @@ class GridCell:
         """Adds item to cell."""
         self.items.append(item)
 
+    def assignToCluster(self, cluster):
+        """Assigns cell to a cluster"""
+        self.cluster = cluster
+
     def getDensityCount(self):
         """Returns a count of the cell's density."""
         return len(self.items)
 
+    def getPosition(self):
+        """Returns a count of the cell's density."""
+        return [self.xPos, self.yPos]
+
+    def isAssignedToCluser(self):
+        """Returns whether or not cell is assigned to cluster."""
+        return self.cluster > 0
+
     def isDense(self):
         """Returns whether or not grid cell is dense."""
         return len(self.items) >= self.min_den
+
+    def isAdjacentCell(self, cell):
+        """Checks if the input dense-cell is adjacent to itself."""
+        xPos = cell.getPosition()[0]
+        yPos = cell.getPosition()[1]
+
+        # Check if input cell is above cell
+        if xPos == self.xPos and (yPos - 1) == self.yPos:
+            return True
+
+        # Check if input cell is below cell
+        if xPos == self.xPos and (yPos + 1) == self.yPos:
+            return True
+
+        # Check if input cell is to the right of cell
+        if (xPos - 1) == self.xPos and yPos == self.yPos:
+            return True
+
+        # Check if input cell is to the left of cell
+        if (xPos + 1) == self.xPos and yPos == self.yPos:
+            return True
+
+        return False
+
+
+
+
+
+
