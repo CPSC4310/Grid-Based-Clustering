@@ -135,7 +135,7 @@ class Grid:
                 if adjCell.isAssignedToCluster():
                     adjCells.append(adjCell)
 
-                    clusterIdx = adjCell.getCellCluster()
+                    clusterIdxk = adjCell.getCellCluster()
                     potentialClusters.append(self.clusters[clusterIdx])
 
             if len(adjCells) == 1:
@@ -144,6 +144,6 @@ class Grid:
                 self.uncertain_cells.remove(cell)
             elif len(adjCells) > 1:
                 # TODO
-                print "Adjacent Cell: ", adjCells
-
+                print "TODO Adjacent Cells: ", adjCells
+                
         return self.clusters

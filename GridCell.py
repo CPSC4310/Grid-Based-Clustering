@@ -10,13 +10,15 @@ class GridCell:
         """Constructor for Grid cell class."""
 
         # Instance Variables
-        self.cluster = -1       # Cluster cell belongs to.
-        self.items = []         # Array of objects contained in cell.
-        self.min_den = min_den  # Minimum density of cell.
-        self.xVals = xVals      # Tuple containing the minimum and maximum x-values for cell.
-        self.yVals = yVals      # Tuple containing the minimum and maximum y-values for cell.
-        self.xPos = xPos        # X-Position of the cell.
-        self.yPos = yPos        # Y-Position of the cell.
+        self.cluster = -1           # Cluster cell belongs to.
+        self.items = []             # Array of objects contained in cell.
+        self.min_den = min_den      # Minimum density of cell.
+        self.xVals = xVals          # Tuple containing the minimum and maximum x-values for cell.
+        self.yVals = yVals          # Tuple containing the minimum and maximum y-values for cell.
+        self.xPos = xPos            # X-Position of the cell.
+        self.yPos = yPos            # Y-Position of the cell.
+        self.xBin = "x" + str(xPos) # X-Bin of the cell.
+        self.yBin = "y" + str(yPos) # Y-Bin of the cell.
 
     def isWithinValueRange(self, data):
         """Checks if an attribute value falls within the min and max value range of cell."""
@@ -33,6 +35,8 @@ class GridCell:
 
     def addItem(self, item):
         """Adds item to cell."""
+        item['sepal_length'] = self.xBin
+        item['sepal_width'] = self.yBin
         self.items.append(item)
 
     def assignToCluster(self, cluster):
@@ -83,3 +87,6 @@ class GridCell:
 
     def getCellItems(self):
         return self.items
+
+    def getBins(self):
+        return { "xBin": self.xBin, "yBin": self.yBin }
