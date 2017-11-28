@@ -23,9 +23,12 @@ def partitionAttributes(values, partitionSize = 5):
 min_den = 10
 gridSize = len(attributes)
 
+# TODO: We do want to make this dynamic.
 # Build a grid for clustering against "petal_length" vs. "petal_width"
 xAxisRange = partitionAttributes(valuesPerAttr["sepal_length"])
 yAxisRange = partitionAttributes(valuesPerAttr["sepal_width"])
+
+data_set = [ { "sepal_length": item["sepal_length"], "sepal_width": item["sepal_width"], "species?": item["species"] } for item in data_set ]
 
 grid = Grid(gridSize, xAxisRange, yAxisRange)
 grid.buildGrid(min_den)
@@ -39,12 +42,18 @@ grid.sortDenseCells()
 clusters = grid.mergeCells()
 clusters = grid.mergeUncertainCells()
 
-clusterData = [ gridCell.getCellItems() for key, cluster in clusters.items() for gridCell in cluster]
-clusterData = [ item for cell in clusterData for item in cell]
+# Perform some black magic. See equivalent in commented code below:
+data = [ item for key, cluster in clusters.items() for cell in cluster for item in cell.getCellItems() ]
+# data = []
+# for key, cluster in clusters.items():
+#     for cell in cluster:
+#         for item in cell.getCellItems():
+#             data.append(item)
 
-## Write clustered data to csv
+columns = ['sepal_width', 'sepal_length', 'species?']
 
-# with open('test.csv', 'wb') as f:
-#     dictWriter = csv.DictWriter(f, attributes)
-#     dictWriter.writeheader()
-#     dictWriter.writerows(clusterData)
+# Write clustered data to csv
+with open('test.csv', 'wb') as f:
+    dictWriter = csv.DictWriter(f, columns)
+    dictWriter.writeheader()
+    dictWriter.writerows(data)
