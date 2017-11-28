@@ -41,7 +41,7 @@ class Grid:
                     isInCell = cell.isWithinValueRange({ "x": point[xAttr], "y": point[yAttr] })
 
                     if isInCell:
-                        cell.addItem(point)
+                        cell.addItem(point, xAttr, yAttr)
 
     def getDenseCells(self):
         """Retrieves all cells with a density."""

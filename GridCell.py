@@ -33,10 +33,10 @@ class GridCell:
 
         return withinXRange and withinYRange
 
-    def addItem(self, item):
+    def addItem(self, item, xAttr, yAttr):
         """Adds item to cell."""
-        item['sepal_length'] = self.xBin
-        item['sepal_width'] = self.yBin
+        item[xAttr] = self.xBin
+        item[yAttr] = self.yBin
         self.items.append(item)
 
     def assignToCluster(self, cluster):
