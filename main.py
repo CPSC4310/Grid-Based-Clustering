@@ -1,5 +1,6 @@
 from Grid import *
 from parseCSV import csvToDictArray
+import csv
 
 file = './data/Iris_Data.csv'
 
@@ -29,7 +30,21 @@ yAxisRange = partitionAttributes(valuesPerAttr["sepal_width"])
 grid = Grid(gridSize, xAxisRange, yAxisRange)
 grid.buildGrid(min_den)
 grid.addPoints(data_set, "sepal_length", "sepal_width")
+
+# Gather and sort dense cells.
 grid.getDenseCells()
 grid.sortDenseCells()
-clusters = grid.mergeCells()
 
+# Build clusters.
+clusters = grid.mergeCells()
+clusters = grid.mergeUncertainCells()
+
+clusterData = [ gridCell.getCellItems() for key, cluster in clusters.items() for gridCell in cluster]
+clusterData = [ item for cell in clusterData for item in cell]
+
+## Write clustered data to csv
+
+# with open('test.csv', 'wb') as f:
+#     dictWriter = csv.DictWriter(f, attributes)
+#     dictWriter.writeheader()
+#     dictWriter.writerows(clusterData)

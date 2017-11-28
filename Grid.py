@@ -54,6 +54,14 @@ class Grid:
                     # If min_den is not met, append cell to uncertain_cells.
                     self.uncertain_cells.append(cell)
 
+    def getCellAtPosition(self, x, y):
+        """Retrieves cell at specified x,y position."""
+        try:
+            cell = self.cells[y][x]
+            return cell
+        except:
+            return None
+
     def sortDenseCells(self):
         """Sorts dense cell list in descending order."""
         self.dense_cells = sorted(self.dense_cells, key=operator.methodcaller("getDensityCount"), reverse=True)
@@ -69,7 +77,8 @@ class Grid:
             self.clusters[clusterCount].append(cell)
 
             for _, _cell in enumerate(self.dense_cells[clusterCount:len(self.dense_cells)]):
-                if cell.isAdjacentCell(_cell) and not _cell.isAssignedToCluser():
+
+                if cell.isAdjacentCell(_cell) and not _cell.isAssignedToCluster():
                     _cell.assignToCluster(clusterCount)
                     self.clusters[clusterCount].append(_cell)
                     self.dense_cells.remove(_cell)
@@ -78,14 +87,63 @@ class Grid:
 
         return self.clusters
 
+    def mergeUncertainCells(self):
+        """Checks uncertain cells and merges them with their direct-density-reachable neighbour's cluster."""
 
+        for cell in self.uncertain_cells:
 
+            potentialClusters = []
+            adjCells = []
 
+            xPos = cell.getPosition()[0]
+            yPos = cell.getPosition()[1]
 
+            # Up
+            if self.getCellAtPosition(xPos, yPos - 1):
+                adjCell = self.getCellAtPosition(xPos, yPos - 1)
 
+                if adjCell.isAssignedToCluster():
+                    adjCells.append(adjCell)
 
+                    clusterIdx = adjCell.getCellCluster()
+                    potentialClusters.append(self.clusters[clusterIdx])
 
+            # Down
+            if self.getCellAtPosition(xPos, yPos + 1):
+                adjCell = self.getCellAtPosition(xPos, yPos + 1)
 
+                if adjCell.isAssignedToCluster():
+                    adjCells.append(adjCell)
 
+                    clusterIdx = adjCell.getCellCluster()
+                    potentialClusters.append(self.clusters[clusterIdx])
 
+            # Left
+            if self.getCellAtPosition(xPos - 1, yPos):
+                adjCell = self.getCellAtPosition(xPos - 1, yPos)
 
+                if adjCell.isAssignedToCluster():
+                    adjCells.append(adjCell)
+
+                    clusterIdx = adjCell.getCellCluster()
+                    potentialClusters.append(self.clusters[clusterIdx])
+
+            # Right
+            if self.getCellAtPosition(xPos + 1, yPos):
+                adjCell = self.getCellAtPosition(xPos + 1, yPos)
+
+                if adjCell.isAssignedToCluster():
+                    adjCells.append(adjCell)
+
+                    clusterIdx = adjCell.getCellCluster()
+                    potentialClusters.append(self.clusters[clusterIdx])
+
+            if len(adjCells) == 1:
+                clusterIdx = adjCells[0].getCellCluster()
+                self.clusters[clusterIdx].append(cell)
+                self.uncertain_cells.remove(cell)
+            elif len(adjCells) > 1:
+                # TODO
+                print "Adjacent Cell: ", adjCells
+
+        return self.clusters

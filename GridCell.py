@@ -44,10 +44,10 @@ class GridCell:
         return len(self.items)
 
     def getPosition(self):
-        """Returns a count of the cell's density."""
+        """Returns the cell's position."""
         return [self.xPos, self.yPos]
 
-    def isAssignedToCluser(self):
+    def isAssignedToCluster(self):
         """Returns whether or not cell is assigned to cluster."""
         return self.cluster > 0
 
@@ -78,8 +78,8 @@ class GridCell:
 
         return False
 
+    def getCellCluster(self):
+        return self.cluster
 
-
-
-
-
+    def getCellItems(self):
+        return self.items
