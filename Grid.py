@@ -18,11 +18,11 @@ class Grid:
 
     def buildGrid(self, min_den):
         """Composes a 2-dimensional grid structure."""
-        for y in range(self.size):
+        for y in range(len(self.yAxis)):
             row = []
 
-            for x in range(self.size):
-                min_y = self.yAxis[(self.size - y) - 1]
+            for x in range(len(self.xAxis)):
+                min_y = self.yAxis[(self.size - y)- 1]
                 max_y = self.yAxis[(self.size - y)]
 
                 min_x = self.xAxis[(self.size - x) - 1]

@@ -16,7 +16,7 @@ gridSize = len(attributes)
 def partitionAttributes(values, partitionSize = 5):
     """Divide values equally according to the specified partition size."""
 
-    rangeDistance = (max(values) - min(values)) / partitionSize
+    rangeDistance = (max(values) - min(values)) / (partitionSize + 1)
 
     ranges = [round(min(values) + ( x * rangeDistance), 2) for x in range(partitionSize)]
     ranges.append(max(values))
@@ -24,7 +24,7 @@ def partitionAttributes(values, partitionSize = 5):
     return ranges
 
 def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
-    # Build a grid for clustering against "petal_length" vs. "petal_width"
+    # Build a grid for clustering against columnOneIdentifier vs. columnTwoIdentifier
     xAxisRange = partitionAttributes(valuesPerAttr[columnOneIdentifier])
     yAxisRange = partitionAttributes(valuesPerAttr[columnTwoIdentifier])
 
@@ -63,6 +63,18 @@ def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
         dictWriter = csv.DictWriter(f, columns)
         dictWriter.writeheader()
         dictWriter.writerows(data)
+
+    # Write ranges to a text file for look up.
+    rangeTuples = []
+
+    for i in range(len(attributes) + 1):
+        x = xAxisRange[i]
+        y = yAxisRange[i]
+        rangeTuples.append([x, y])
+
+    f1 = open(outputFolder + columnOneIdentifier + "_" + columnTwoIdentifier + ".txt", 'w')
+    f1.write(columnOneIdentifier + ',' + columnTwoIdentifier + '\n')
+    f1.write(',\n'.join((str(s[0]) + ", " + (str(s[1]))) for s in rangeTuples))
 
 for i in range(len(attributes)-1):
     for j in range(i+1, len(attributes)-1):
