@@ -135,7 +135,7 @@ class Grid:
                 if adjCell.isAssignedToCluster():
                     adjCells.append(adjCell)
 
-                    clusterIdxk = adjCell.getCellCluster()
+                    clusterIdx = adjCell.getCellCluster()
                     potentialClusters.append(self.clusters[clusterIdx])
 
             if len(adjCells) == 1:
@@ -143,7 +143,18 @@ class Grid:
                 self.clusters[clusterIdx].append(cell)
                 self.uncertain_cells.remove(cell)
             elif len(adjCells) > 1:
-                # TODO
-                print "TODO Adjacent Cells: ", adjCells
-                
+                maxDense = cell.getDensityCount()
+                cellsToCompare = []
+
+                for aCell in adjCells:
+                    if aCell.getDensityCount() > maxDense:
+                        maxDense = aCell.getDensityCount()
+                        cellsToCompare.append(aCell)
+                    elif aCell.getDensityCount() == maxDense:
+                        cellsToCompare.append(aCell)
+
+                    if len(cellsToCompare) == 1:
+                        clusterIdx = cellsToCompare[0].getCellCluster()
+                        self.clusters[clusterIdx].append(cell)
+
         return self.clusters
