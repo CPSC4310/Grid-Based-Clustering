@@ -64,9 +64,6 @@ def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
         dictWriter.writeheader()
         dictWriter.writerows(data)
 
-# TODO: make this get the column identifiers from row 1 in the csv instead of hardcoded values
-columnIdentifiers = ["sepal_width", "sepal_length", "petal_length", "petal_width"]
-
-for i in range(len(columnIdentifiers)):
-    for j in range(i+1, len(columnIdentifiers)):
-        clusterTwoColumns(columnIdentifiers[i], columnIdentifiers[j])
+for i in range(len(attributes)-1):
+    for j in range(i+1, len(attributes)-1):
+        clusterTwoColumns(attributes[i], attributes[j])
