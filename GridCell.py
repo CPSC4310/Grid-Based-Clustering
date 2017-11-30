@@ -35,6 +35,8 @@ class GridCell:
 
     def addItem(self, item, xAttr, yAttr):
         """Adds item to cell."""
+        item["xVal"] = item[xAttr]
+        item["yVal"] = item[yAttr]
         item[xAttr] = self.xBin
         item[yAttr] = self.yBin
         self.items.append(item)

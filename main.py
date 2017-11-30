@@ -1,5 +1,6 @@
 from Grid import *
 from parseCSV import csvToDictArray
+from utils import silhouette_coefficient, clusterMeans
 import csv
 import os
 
@@ -53,16 +54,54 @@ def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
     columns = [columnOneIdentifier, columnTwoIdentifier, "species"]
 
     outputFolder = "./output/"
+    evalFolder = outputFolder + "eval/"
+    rangesFolder = outputFolder + "ranges/"
 
     # Create the output directory if it doesn't already exist
     if not os.path.isdir(outputFolder):
         os.mkdir(outputFolder, 0755)
+        os.mkdir(evalFolder, 0755)
+        os.mkdir(rangesFolder, 0755)
+
+    # Write evaluation results for each cluster.
+    itemPointsPerCluster = {}
+
+    for key, cluster in clusters.items():
+        itemPointsPerCluster[key] = []
+
+        for cell in cluster:
+            points = [ [items["xVal"], items["yVal"]] for items in cell.getCellItems() ]
+            itemPointsPerCluster[key] = points
+
+    cMeans = { key: clusterMeans(cluster) for key, cluster in itemPointsPerCluster.items() }
+    evalsPerCluster = []
+    for key, cluster in itemPointsPerCluster.items():
+        avgSCs = []
+        for idx, point in enumerate(cluster):
+            pointsInsideCluster = []
+            otherClusters = []
+
+            for _idx, c in enumerate(cluster):
+                if idx != _idx:
+                    pointsInsideCluster.append(c)
+
+            for _key, _c in cMeans.items():
+                if key != _key:
+                    otherClusters.append(_c)
+
+            avgSCs.append(silhouette_coefficient(point, pointsInsideCluster, otherClusters))
+        evalsPerCluster.append(["Cluster Number: " + str(key), "Silhouette Coefficient: " + str(sum(avgSCs) / len(avgSCs))])
+
+    f = open(evalFolder + columnOneIdentifier + "_" + columnTwoIdentifier + ".txt", 'w')
+    f.write(',\n'.join((str(s[0]) + ", " + (str(s[1]))) for s in evalsPerCluster))
 
     # Write clustered data to csv
+    data_t = [{columnOneIdentifier: item[columnOneIdentifier],
+               columnTwoIdentifier: item[columnTwoIdentifier], "species": item["species"]} for item in data]
     with open(outputFolder + columnOneIdentifier + "-VS-" + columnTwoIdentifier + "-Clusters.csv", 'wb') as f:
         dictWriter = csv.DictWriter(f, columns)
         dictWriter.writeheader()
-        dictWriter.writerows(data)
+        dictWriter.writerows(data_t)
 
     # Write ranges to a text file for look up.
     rangeTuples = []
@@ -72,7 +111,7 @@ def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
         y = yAxisRange[i]
         rangeTuples.append([x, y])
 
-    f1 = open(outputFolder + columnOneIdentifier + "_" + columnTwoIdentifier + ".txt", 'w')
+    f1 = open(rangesFolder + columnOneIdentifier + "_" + columnTwoIdentifier + ".txt", 'w')
     f1.write(columnOneIdentifier + ',' + columnTwoIdentifier + '\n')
     f1.write(',\n'.join((str(s[0]) + ", " + (str(s[1]))) for s in rangeTuples))
 
