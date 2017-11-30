@@ -56,12 +56,14 @@ def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
     outputFolder = "./output/"
     evalFolder = outputFolder + "eval/"
     rangesFolder = outputFolder + "ranges/"
+    perClusterFolder = outputFolder + "perCluster/"
 
     # Create the output directory if it doesn't already exist
     if not os.path.isdir(outputFolder):
         os.mkdir(outputFolder, 0755)
         os.mkdir(evalFolder, 0755)
         os.mkdir(rangesFolder, 0755)
+        os.mkdir(perClusterFolder, 0755)
 
     # Write evaluation results for each cluster.
     itemPointsPerCluster = {}
@@ -72,6 +74,14 @@ def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
         for cell in cluster:
             points = [ [items["xVal"], items["yVal"]] for items in cell.getCellItems() ]
             itemPointsPerCluster[key] = points
+
+        # Write per cluster data to csv
+        data_c = [{columnOneIdentifier: item[columnOneIdentifier], columnTwoIdentifier: item[columnTwoIdentifier],
+                   "species": item["species"]} for cell in cluster for item in cell.getCellItems()]
+        with open(perClusterFolder + columnOneIdentifier + "-VS-" + columnTwoIdentifier + "_cluster_" + str(key) + ".csv", 'wb') as f:
+            dictWriter = csv.DictWriter(f, columns)
+            dictWriter.writeheader()
+            dictWriter.writerows(data_c)
 
     cMeans = { key: clusterMeans(cluster) for key, cluster in itemPointsPerCluster.items() }
     evalsPerCluster = []
