@@ -17,8 +17,11 @@ class GridCell:
         self.yVals = yVals          # Tuple containing the minimum and maximum y-values for cell.
         self.xPos = xPos            # X-Position of the cell.
         self.yPos = yPos            # Y-Position of the cell.
-        self.xBin = "x" + str(xPos) # X-Bin of the cell.
-        self.yBin = "y" + str(yPos) # Y-Bin of the cell.
+
+        # X-Bin of the cell.
+        self.xBin = "[" + str(xVals[0]) + ".." + str(xVals[1]) + "]"
+        # Y-Bin of the cell.
+        self.yBin = "[" + str(yVals[0]) + ".." + str(yVals[1]) + "]"
 
     def isWithinValueRange(self, data):
         """Checks if an attribute value falls within the min and max value range of cell."""

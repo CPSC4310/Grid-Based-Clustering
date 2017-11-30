@@ -4,16 +4,6 @@ from utils import silhouette_coefficient, clusterMeans
 import csv
 import os
 
-file = './data/Iris_Data.csv'
-
-# Parse CSV file
-parsedData = csvToDictArray(file)
-data_set = parsedData[0]
-attributes = parsedData[1]
-valuesPerAttr = parsedData[2]
-min_den = 10
-gridSize = len(attributes)
-
 def partitionAttributes(values, partitionSize = 5):
     """Divide values equally according to the specified partition size."""
 
@@ -43,7 +33,7 @@ def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
     clusters = grid.mergeCells()
     clusters = grid.mergeUncertainCells()
 
-    # Perform some black magic. See equivalent in commented code below:
+    # Flatten data set. See equivalent in commented code below:
     data = [ item for key, cluster in clusters.items() for cell in cluster for item in cell.getCellItems() ]
     # data = []
     # for key, cluster in clusters.items():
@@ -51,18 +41,17 @@ def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
     #         for item in cell.getCellItems():
     #             data.append(item)
 
+    # Gather clustering results.
     columns = [columnOneIdentifier, columnTwoIdentifier, "species"]
 
     outputFolder = "./output/"
     evalFolder = outputFolder + "eval/"
-    rangesFolder = outputFolder + "ranges/"
     perClusterFolder = outputFolder + "perCluster/"
 
     # Create the output directory if it doesn't already exist
     if not os.path.isdir(outputFolder):
         os.mkdir(outputFolder, 0755)
         os.mkdir(evalFolder, 0755)
-        os.mkdir(rangesFolder, 0755)
         os.mkdir(perClusterFolder, 0755)
 
     # Write evaluation results for each cluster.
@@ -83,6 +72,7 @@ def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
             dictWriter.writeheader()
             dictWriter.writerows(data_c)
 
+    # Execute evaluation strategy (finding average Silhouette Coefficient per cluster).
     cMeans = { key: clusterMeans(cluster) for key, cluster in itemPointsPerCluster.items() }
     evalsPerCluster = []
     for key, cluster in itemPointsPerCluster.items():
@@ -102,10 +92,11 @@ def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
             avgSCs.append(silhouette_coefficient(point, pointsInsideCluster, otherClusters))
         evalsPerCluster.append(["Cluster Number: " + str(key), "Silhouette Coefficient: " + str(sum(avgSCs) / len(avgSCs))])
 
+    # Write evaluation results to "evals/".
     f = open(evalFolder + columnOneIdentifier + "_" + columnTwoIdentifier + ".txt", 'w')
     f.write(',\n'.join((str(s[0]) + ", " + (str(s[1]))) for s in evalsPerCluster))
 
-    # Write clustered data to csv
+    # Write overall clustered data to csv.
     data_t = [{columnOneIdentifier: item[columnOneIdentifier],
                columnTwoIdentifier: item[columnTwoIdentifier], "species": item["species"]} for item in data]
     with open(outputFolder + columnOneIdentifier + "-VS-" + columnTwoIdentifier + "-Clusters.csv", 'wb') as f:
@@ -113,18 +104,20 @@ def clusterTwoColumns(columnOneIdentifier, columnTwoIdentifier):
         dictWriter.writeheader()
         dictWriter.writerows(data_t)
 
-    # Write ranges to a text file for look up.
-    rangeTuples = []
+##############
+#   MAIN     #
+##############
+file = './data/Iris_Data.csv'
 
-    for i in range(len(attributes) + 1):
-        x = xAxisRange[i]
-        y = yAxisRange[i]
-        rangeTuples.append([x, y])
+# Parse CSV file
+parsedData = csvToDictArray(file)
+data_set = parsedData[0]
+attributes = parsedData[1]
+valuesPerAttr = parsedData[2]
+min_den = 10
+gridSize = len(attributes)
 
-    f1 = open(rangesFolder + columnOneIdentifier + "_" + columnTwoIdentifier + ".txt", 'w')
-    f1.write(columnOneIdentifier + ',' + columnTwoIdentifier + '\n')
-    f1.write(',\n'.join((str(s[0]) + ", " + (str(s[1]))) for s in rangeTuples))
-
+# Execute clustering strategy.
 for i in range(len(attributes)-1):
     for j in range(i+1, len(attributes)-1):
         clusterTwoColumns(attributes[i], attributes[j])
